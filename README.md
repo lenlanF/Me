@@ -8,11 +8,9 @@
 QuantumultX.conf
 
 本地配置：
-建立本地文件夹 目录 iCloud Drive/QuantumultX/Scripts/nzw9314 或者 我的iPhone/QuantumultX/Scripts/nzw9314
-WoringCopy挂载我的仓库
-
+建立本地文件夹 目录 iCloud Drive/QuantumultX/Scripts/lenlanF 或者 我的iPhone/QuantumultX/Scripts/lenlanF
+Js_local_WorkingCopy.conf 脚本本地订阅.可用WoringCopy挂载我的仓库
 Js.conf 脚本远程订阅
-Js_local_WorkingCopy.conf 脚本本地订阅.
 
 Get_Cookie_New.conf 获取Cookie订阅，仅在Cookie获取或失效时启用,不需要时右滑动禁用.
 Get_Cookie_Remote.conf 获取Cookie远程订阅,仅在Cookie获取或失效时启用,不需要时右滑动禁用.
