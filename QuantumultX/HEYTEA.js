@@ -3,6 +3,7 @@
 请先按下述方法进行配置，进入"喜茶GO"小程序，点击"我的"，进入"任务中心"，若弹出"首次写入喜茶 Authorization 成功"即可正常食用，其他提示或无提示请发送日志信息至 issue。
 到 cron 设定时间自动签到时，若弹出"喜茶 - 签到成功"即完成签到，其他提示或无提示请发送日志信息至 issue。
 Author：zZPiglet
+--cookie时效太短，弃坑
 
 Quantumult X (App Store:1.0.5+, TestFlight 190+):
 [task_local]
