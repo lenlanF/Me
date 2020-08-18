@@ -147,7 +147,7 @@ function checkin() {
         $hammer.alert(Protagonist, "cookie没有，先去获取吧!");
         return $hammer.done();
     }
-    const host = `https://ikuuu.co`;
+    const host = `https://suannai.link`;
     let options = {
         url: `${host}/user/checkin`,
         headers: {
