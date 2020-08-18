@@ -13,7 +13,7 @@ QuantumultX 本地脚本配置:
 [rewrite_local]
 https://www.suannai.link/login/
 # 获取Cookie
-https:\/\/www\.suannai\.link\/user\/profile url script-request-header test.js
+https:\/\/suannai\.link\/user\/profile url script-request-header suannai.js
 [mitm] 
 hostname = www.suannai.link
 **/
@@ -120,11 +120,11 @@ const $hammer = (() => {
     return { isRequest, isSurge, isQuanX, log, alert, read, write, request, done };
 })();
 
-const CookieKey = "CookieIKUUU";
-const Protagonist = "iKuuu";
+const CookieKey = "Cookiesuannai";
+const Protagonist = "suannai";
 
 function GetCookie() {
-    const CookieName = "酸奶的Cookie";
+    const CookieName = "suannai的Cookie";
     const CookieValue = $request.headers.Cookie;
     if(!CookieValue){
         $hammer.alert(CookieName, "未捕获到cookie信息");
