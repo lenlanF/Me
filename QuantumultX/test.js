@@ -124,7 +124,7 @@ const CookieKey = "CookieIKUUU";
 const Protagonist = "iKuuu";
 
 function GetCookie() {
-    const CookieName = "IKUUU的Cookie";
+    const CookieName = "酸奶的Cookie";
     const CookieValue = $request.headers.Cookie;
     if(!CookieValue){
         $hammer.alert(CookieName, "未捕获到cookie信息");
@@ -152,8 +152,8 @@ function checkin() {
         url: `${host}/user/checkin`,
         headers: {
             "accept": "application/json, text/javascript, */*; q=0.01",
-            "origin": "https://ikuuu.co",
-            "referer": "https://ikuuu.co/user",
+            "origin": "https://suannai.link",
+            "referer": "https://suannai.link/user",
             "cookie": cookie,
             "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1",
         }
