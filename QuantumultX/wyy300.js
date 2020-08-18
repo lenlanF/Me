@@ -9,7 +9,7 @@
  Author photonmang  @https://github.com/photonmang/quantumultX
  */
 
-const user='SoulMateles'  //填写网易云音乐用户名
+const user='1154688571@qq.com'  //填写网易云音乐用户名
 const pwd='4b57735be5788e2243e7b1d2b16d994e' //填写网易云音乐密码
 const url = "http://111.231.32.34/api2/?uin="+user+"&pwd="+pwd;
 const method = "GET";
