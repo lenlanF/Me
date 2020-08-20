@@ -1,6 +1,7 @@
 /*=================================
 关注微信公众号iosrule和Q2群320560160
-邀请码 83Q0L3
+作者邀请码 B158TA
+LENLANF邀请码 ENARIR
 下载地址:https://apps.apple.com/cn/app/id1474215729
 2020.8.13更新签到
 
@@ -25,7 +26,7 @@ mit=open.vd01.cn
 //====================================
 const $iosrule = iosrule();
 const log=1;//设置0关闭日志,1开启日志
-const TT=3;//运行多少次提示
+const TT=10;//运行10次提示
 const closemsg=0;//1,彻底关闭通知
 //++++++++++++++++++++++++++++++++-
 
@@ -59,19 +60,6 @@ function manqu_begin()
 manqu_sign();
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -155,19 +143,6 @@ if(closemsg==0)
 $iosrule.notify(x,y,z);}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 function iosint()
 {
   var Range="ABCD12345678&STEgcom.manqu.mqreader=";
@@ -220,8 +195,3 @@ function iosrule() {
     }
     return { isRequest, isQuanX, isSurge, notify, write, read, get, post, end }
 };
-
-
-
-
-
