@@ -1,13 +1,8 @@
 # Me
 说明 :
-只是整理搬运和同步更新大佬脚本.自用
+只是整理搬运和同步更新大佬脚本.自用，不负责维护脚本.
 
-不负责维护脚本.
-
-全局配置：
-QuantumultX.conf
-
-本地配置：
+脚本本地配置：
 建立本地文件夹 目录 iCloud Drive/QuantumultX/Scripts/lenlanF 或者 我的iPhone/QuantumultX/Scripts/lenlanF
 Js_local_WorkingCopy.conf 脚本本地订阅.可用WoringCopy挂载我的仓库
 Js.conf 脚本远程订阅
@@ -25,32 +20,5 @@ lenlanF发布的Script项目中涉及的任何解锁和解密分析脚本仅用�
 如果任何单位或个人认为该项目的脚本可能涉嫌侵犯其权利，则应及时通知并提供身份证明，所有权证明，我们将在收到认证文件后删除相关脚本.
 lenlanF对任何脚本问题概不负责，包括但不限于由任何脚本错误导致的任何损失或损害.
 您必须在下载后的24小时内从计算机或手机中完全删除以上内容.
-任何以任何方式查看此项目的人或直接或间接使用该Script项目的任何脚本的使用者都应仔细阅读此声明。nzw9314保留随时更改或补充此免责声明的权利。一旦使用并复制了任何相关脚本或Script项目的规则，则视为您已接受此免责声明.
-
-特别感谢：
-@NobyDa
-@lhie1
-@ConnersHua
-@chavyleung
-@yichahucha
-@langkhach270389
-@Choler
-@onewayticket255
-@NavePnow
-@Meeta
-@Neurogram-R
-@sazs34
-@uniqueque
-@eHpo
-@Sunert
-@songyangzz
-@zZPiglet
-@Peng-YM
-@evilbutcher
-@lxk0301
-@toulanboy
-@lowking
-@nzw9314
-
-License
-GPLv3
+任何以任何方式查看此项目的人或直接或间接使用该Script项目的任何脚本的使用者都应仔细阅读此声明。
+lenlanF保留随时更改或补充此免责声明的权利。一旦使用并复制了任何相关脚本或Script项目的规则，则视为您已接受此免责声明.
