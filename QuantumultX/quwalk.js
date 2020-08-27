@@ -3,9 +3,11 @@
 邀请码 5KNCVN
 下载地址https://apps.apple.com/cn/app/%E8%B6%A3%E8%B5%B0%E5%B0%8A%E4%BA%AB%E7%89%88-%E8%B5%B0%E8%B7%AF%E8%B5%9A%E9%92%B1app/id1465888732
 
-
+功能:跑步，签到，打卡，步数兑换,偷步等.
+攻略，阅读看视频玩游戏
 作者红鲤鱼绿鲤鱼与驴  2020.8.6
-2020.8.7 修复很多bug,新闻软件不错
+2020.8.7 修复很多bug
+2020.8.27 增加跑步
 
 //=================================
 #圈叉趣走App签到
@@ -21,7 +23,7 @@ http-request https:\/\/mobile01\.91quzou\.com\/rebate\/qz\/task\/homeTaskView\.d
 
 mit=mobile01.91quzou.com
 
-#定时参考3分钟
+#定时签到
 
 */
 
@@ -40,6 +42,7 @@ const quwalk="趣走APP";
 const quwalkhdname="quwalkhdname";
 var quwalk_hd=$iosrule.read(quwalkhdname);
 var quwalk_code="rebate/qz/task/homeTaskView.do";
+
 var shuai="**********🔔**************";
 //++++++++++++++++++++++++++++++++
 
@@ -50,7 +53,6 @@ function main()
 
 function quwalk_begin()
 {
-   
 for (var i = 0; i < 12; i++) {
       (function(i) {
         setTimeout(function() {
@@ -62,10 +64,11 @@ else if (i==3)quwalk_myTaskView(i);
 else if (i==4)
 quwalk_getExpectExchangeCurrency(i)
 else if (i==5)quwalk_dailytask(i);
-
-else if (i==6)quwalk_daka(i);
-else if (i==7)
+else if (i==6)quwalk_opening(i);
+else if (i==7)quwalk_daka(i);
+else if (i==8)
 quwalk_huntFindStolenPerson(i);
+else if (i==9)quwalk_gtodayWalk(i);
          }, (i + 1) * 800);
               })(i)
 }
@@ -95,7 +98,7 @@ if ($iosrule.isRequest) {
 
 function quwalk_sign(qq)
   {
-
+ printlog("趣走程序运营中....by 🔴红鲤鱼绿鲤鱼与驴 2020.8.7")
    var result1=qq+"-[签到🎋]";
    var result2="";
 const llUrl1={
@@ -135,17 +138,15 @@ function quwalk_checkin(res)
 
 function quwalk_user(qq)
 {var result2="";var result1=qq+"-[获取用户信息ૢ👮🏻]";
-printlog("趣走程序运营中....by 🔴红鲤鱼绿鲤鱼与驴 2020.8.7");
   const llUrl2={
         url:"https://mobile01.91quzou.com/rebate/wallet/myWallet/myBaseInfoQuzou.do",
         headers:JSON.parse(quwalk_hd),timeout:600000}
 
   $iosrule.post(llUrl2,function(error, response, data) {
   var obj=JSON.parse(data);
-  if(obj.code=="0")
+  if(obj.code==0)
   result2="昵称🔆"+obj.data.nickName+"\n我的趣币💰"+obj.data.myCoin+"累计提现💰"+obj.data.allWithdraw+"📢"+obj.data.signPrompt+"🔔"+obj.data.currentRate;
   else result2="获取用户信息❎"
-  printlog(result1+"\n"+result2);
  
 })}
  
@@ -369,8 +370,60 @@ else result2="获取任务信息❎"
 })}
 
 
+function quwalk_opening(qq)
+{var result2="";var result1=qq+"-[阅读⭐️视频⭐️小视频模块]";
 
+var iosrule=["%E6%97%B6%E5%B0%9A","%E6%8E%A8%E8%8D%90","%E7%83%AD%E7%82%B9","%E7%BE%8E%E9%A3%9F","%E4%B8%89%E5%86%9C","%E6%97%B6%E5%B0%9A","%E5%81%A5%E5%BA%B7","%E5%A5%B3%E4%BA%BA","%E7%94%9F%E6%B4%BB","%E6%95%99%E8%82%B2","%E4%BD%93%E8%82%B2","%E7%A7%91%E6%8A%80","%E6%B8%B8%E6%88%8F"];
+var idd=getRandom(0,iosrule.length);
+var bd=`name=`+iosrule[idd]+`&newsType=12&showNotOpenRedCount=6`;
+  const llUrl2={
+        url:"https://mobile01.91quzou.com/stepnews/hotNews/queryNewsList.do",headers:JSON.parse(quwalk_hd),body:bd}
 
+  $iosrule.post(llUrl2,function(error, response, data) {quwalk_getwalk();
+    if(log==1)console.log(result1+"\n")
+  var obj=JSON.parse(data);
+if(obj.code=="0"&&obj.data.list.length>0)
+{
+  var jj=getRandom(0,obj.data.list.length);
+  
+var xid=obj.data.list[jj].id;
+console.log("©🔛💪🏻🅾🌀"+xid);
+quwalk_read_vedio(xid);
+
+}
+else result2="获取阅读任务信❎"
+  printlog(result1+result2)
+  
+})}
+
+function quwalk_read_vedio(x)
+{
+  
+  var av1="[看视频奖励]";var av2="[阅读奖励]";var av3="[看小视频奖励]";
+  var en="47b0dbb78e2a857a338944772d420202";
+  
+  var vbd1=`encode=`+getrandomstr(en.length)+`&id=`+getrandomstr(12)+`&time=1596599805033&type=2`;
+
+  
+  var vbd2=`encode=`+getrandomstr(en.length)+`&id=`+x+`&time=1596638181159&type=1`;
+  
+  
+  var vbd3=`encode=`+getrandomstr(en.length)+`&id=153A754A-3893-45B3-8A86-`+getrandomstr(12)+`&time=1596670234123&type=2`;
+  
+   quwalk_allgetReward(av1,vbd1);
+    
+    var dna2=getRandom(30,35);
+          setTimeout(function() {
+    quwalk_allgetReward(av2,vbd2);
+          }, dna2 * 1000);
+          
+           var dna3=getRandom(60,65);
+                    setTimeout(function() {
+              quwalk_allgetReward(av3,vbd3);
+                    }, dna3 * 1000);
+          
+
+}
 
 function quwalk_allgetReward(title,bd)
 {var result2="";var result1=title;
@@ -499,6 +552,52 @@ if (ck==true)
 }}
 
 
+function quwalk_gtodayWalk(qq)
+{var result2="";var result1=qq+"-🐔🍖[跑步中🏃‍♂...目标2万步️]";
+
+  const llUrl2={
+        url:"https://mobile01.91quzou.com/v4/walk/todayWalk.do",headers:JSON.parse(quwalk_hd)}
+  $iosrule.get(llUrl2,function(error, response, data) {
+    if(log==1)console.log(result1+"\n"+data)
+  var obj=JSON.parse(data);
+if(obj.code=="0")
+{result2="✅"+"总步数:"+obj.data.totalNum+"今日步数:"+obj.data.walkNum+"其他步数:"+obj.data.awardNum+"趣币💰"+obj.data.qb;
+
+if(obj.data.walkNum<20000)
+{
+  var dota=obj.data.walkNum+1988;
+  quwalk_ptodayWalk(dota)
+}
+}
+else if(obj.code=="1")
+result2=obj.msg;
+else result2="获取今日步数信息❎"
+printlog(result1+result2);
+  
+})}
+
+
+function quwalk_ptodayWalk(ios)
+{
+  var jsbox=getcoding(ios);
+const llUrl3={
+        url:"https://mobile01.91quzou.com/walk/submitWalk.do",headers:JSON.parse(quwalk_hd),body:jsbox}
+  $iosrule.post(llUrl3,function(error, response, data) {
+    if(log==1)console.log("🏃🏻♑️💈♑️🌀"+"\n"+data)
+    var obj=JSON.parse(data);
+  if(obj.code=="0")
+  printlog("🏃‍♂️"+obj.msg)
+  
+})}
+
+
+
+function getcoding(iosrule)
+{const quwalk_co="walkRecord=";
+var rule="="+iosrule;
+  var decode=new Date();var inv=decode.getMonth()+1;if(inv<10)inv="0"+inv;var it=decode.getDate();if(it<10)inv="0"+inv;var code=quwalk_co+decode.getFullYear().toString()+inv.toString()+it.toString()+rule;
+  return code;
+}
 
 function getrandomstr(n) {
       var chars = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c", "d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y",        "z"];
@@ -587,8 +686,4 @@ function iosrule() {
     }
     return { isRequest, isQuanX, isSurge, notify, write, read, get, post, end }
 };
-
-
-
-
 
