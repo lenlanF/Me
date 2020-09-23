@@ -2,28 +2,42 @@
 邀请码 5KNCVN
 下载地址https://apps.apple.com/cn/app/%E8%B6%A3%E8%B5%B0%E5%B0%8A%E4%BA%AB%E7%89%88-%E8%B5%B0%E8%B7%AF%E8%B5%9A%E9%92%B1app/id1465888732
 
+
+远程库订阅:
+新版
+https://raw.githubusercontent.com/wangdelu2020/hongliyu/master/quwalk2.2.js
+旧版
+https://raw.githubusercontent.com/wangdelu2020/hongliyu/master/quwalk2.1.js
+
 功能:跑步，签到，打卡，步数兑换,偷步等.
 攻略，阅读看视频玩游戏
 作者红鲤鱼绿鲤鱼与驴  2020.8.6
 2020.8.7 修复很多bug
 2020.8.27 增加跑步,20200901修复字符
 2020.8.28 增加每日5000步挑战
+2020.9.6 增加签到分享奖励和签到页随机获取趣币(有次数限制)9.7增加每日任务分享奖励
+2020.9.21增加通知提示
 
 //=================================
-#圈叉趣走App签到
-https:\/\/mobile01\.91quzou\.com\/rebate\/qz\/task\/homeTaskView\.do url script-request-header quwalk2.2.js
+#圈叉趣走App签到(远程库)
+https:\/\/mobile01\.91quzou\.com\/rebate\/qz\/task\/homeTaskView\.do url script-request-header https://raw.githubusercontent.com/wangdelu2020/hongliyu/master/quwalk2.2.js
 
 
 mit=mobile01.91quzou.com
 
+
+#定时参考
+0 35,50 0-23 * * ? https://raw.githubusercontent.com/wangdelu2020/hongliyu/master/quwalk2.2.js, tag=趣走尊享版签到, enabled=true
 //====================================
 
-#loon 趣走App签到
-http-request https:\/\/mobile01\.91quzou\.com\/rebate\/qz\/task\/homeTaskView\.do script-path=quwalk2.2.js, requires-body=true, timeout=30, tag=趣走签到
+#loon 趣走App签到(远程库)
+http-request https:\/\/mobile01\.91quzou\.com\/rebate\/qz\/task\/homeTaskView\.do script-path=https://raw.githubusercontent.com/wangdelu2020/hongliyu/master/quwalk2.2.js, requires-body=true, timeout=30, tag=趣走签到
 
 mit=mobile01.91quzou.com
 
 #定时签到
+
+小白重写配置教程:https://mp.weixin.qq.com/s/YjTgTToPEeX1infR1vTwHg
 
 */
 
@@ -34,11 +48,11 @@ mit=mobile01.91quzou.com
 const $iosrule = iosrule();
 
 const log=0;//设置0关闭日志,1开启日志
-
+const notice_open=1;//设置0关闭通知,1开启通知
 //++++++++++++++++++++++++++++++++-
 
 
-const quwalk="趣走APP";
+const quwalk="趣走尊享版APP"+"2020.9.21更新";
 const quwalkhdname="quwalkhdname";
 var quwalk_hd=$iosrule.read(quwalkhdname);
 var quwalk_code="rebate/qz/task/homeTaskView.do";
@@ -51,30 +65,47 @@ function main()
 {    quwalk_begin();
 }
 
-function quwalk_begin()
+async function quwalk_begin()
 {
-for (var i = 0; i < 12; i++) {
-      (function(i) {
-        setTimeout(function() {
-   
-if(i==0) quwalk_user(i);
-else if (i==1)quwalk_sign(i);
-else if (i==2)quwalk_todayWalk(i);
-else if (i==3)quwalk_myTaskView(i);
-else if (i==4)
-quwalk_getExpectExchangeCurrency(i)
-else if (i==5)quwalk_dailytask(i);
-else if (i==6)quwalk_opening(i);
-else if (i==7)quwalk_daka(i);
-else if (i==8)
-quwalk_huntFindStolenPerson(i);
-else if (i==9)quwalk_gtodayWalk(i);
-else if (i==10)
-quwalk_challengeApply(i)
-         }, (i + 1) * 800);
-              })(i)
+
+printlog("趣走尊享版App运行中....by 🔴红鲤鱼绿鲤鱼与驴 2020.9.21更新")
+let u1=await quwalk_user();
+let u2=await quwalk_sign();
+let u3=await quwalk_checkin();
+let u4=await quwalk_signInCoin()
+let u5=await quwalk_share();
+let u6=
+await quwalk_huntFindStolenPerson();
+let u7=await quwalk_daka();
+let u8=await quwalk_subdaka();
+
+let u9=await quwalk_challengeApply();//5
+
+let u10=await quwalk_gtodayWalk();//6
+let u11=await quwalk_todayWalk();//7
+let u12=await quwalk_myTaskView();//8
+await quwalk_getExpectExchangeCurrency();
+await quwalk_dailytask();
+
+
+
+let ttmsg=
+u1+"\n"
++u2+"\n    "+u3+"\n    "+u4+"\n    "+u5+"\n"
++u6+"\n"
++u7+u8+"\n"
++u9+"\n"
++u10+"\n"
++u11+"\n"
++u12;
+
+if(notice_open==1)papa(quwalk,"",ttmsg)
+
+
+
+
 }
-}
+
 
 
 
@@ -96,12 +127,29 @@ if ($iosrule.isRequest) {
   main();
   $iosrule.end()
 }
+function quwalk_user()
+{
+    return  new Promise((resolve, reject) => {
+  var result2="";var result1="1-【用户】";
+  const llUrl2={
+        url:"https://mobile01.91quzou.com/rebate/wallet/myWallet/myBaseInfoQuzou.do",
+        headers:JSON.parse(quwalk_hd),timeout:600000}
 
+  $iosrule.post(llUrl2,function(error, response, data) {
+  var obj=JSON.parse(data);
+  if(obj.code==0)
+  result2="昵称🔆"+obj.data.nickName+"\n趣币💰"+obj.data.myCoin+",累计提现💰"+obj.data.allWithdraw+"元."+obj.data.signPrompt+"🔔"+obj.data.currentRate;
+  else result2="获取用户信息❎"
+  printlog(result1+result2)
+ resolve(result1+result2);
 
-function quwalk_sign(qq)
+})
+})}
+ 
+function quwalk_sign()
   {
- printlog("趣走程序运营中....by 🔴红鲤鱼绿鲤鱼与驴 2020.8.7")
-   var result1=qq+"-[签到🎋]";
+  return  new Promise((resolve, reject) => {
+   var result1="2-【签到】";
    var result2="";
 const llUrl1={
       url:"https://mobile01.91quzou.com/rebate/activity/sign/v4/signRecord.do",
@@ -112,63 +160,269 @@ const llUrl1={
     var obj=JSON.parse(data)
 if(obj.code=="0")
 {result2="签到✅"+"步数"+obj.data.walk+"红包"+obj.data.redbagMoney;
-printlog(result1+result2);
+
+
 }
 else if(obj.code=="1")
-{result2="今天已经签到✅";quwalk_checkin(result1+result2);}
+{result2="今天已经签到✅";
+
+
+}
 else  if(obj.code=="2008")
 {result2="请获取数据❎";
-printlog(result1+result2)
+
+
 }
+printlog(result1+result2);
+resolve(result1+result2);
+
+})
 
 })}
 
-function quwalk_checkin(res)
-{var result2="";var result1="[查询签到©♓️🍥]"
+function quwalk_checkin()
+{
+    return  new Promise((resolve, reject) => {
+  
+  var result2="";var result1="[查询]"
   const llUrl2={
         url:"https://mobile01.91quzou.com/rebate/activity/sign/enterSignRecord.do",
         headers:JSON.parse(quwalk_hd)}
 
   $iosrule.post(llUrl2,function(error, response, data) {
   var obj=JSON.parse(data);
-  if(obj.code==0)result2=res+",获得💰"+obj.data.iawardmoney+",连续签到"+obj.data.isignincount+"天.";
-  else result2=res+",查询签到信息❎"
-  printlog(result2)
+  if(obj.code==0)result2="趣币💰"+obj.data.iawardmoney+",连续签到"+obj.data.isignincount+"天.";
+  else result2=",查询签到信息❎"
+  printlog(result1+result2)
+  resolve(result1+result2);
+})
   
 })}
 
 
-function quwalk_user(qq)
-{var result2="";var result1=qq+"-[获取用户信息ૢ👮🏻]";
+function quwalk_share()
+{
+
+  return  new Promise((resolve, reject) => {
+
+var result2="";var result1="[签到分享]"
   const llUrl2={
-        url:"https://mobile01.91quzou.com/rebate/wallet/myWallet/myBaseInfoQuzou.do",
-        headers:JSON.parse(quwalk_hd),timeout:600000}
+        url:"https://mobile01.91quzou.com/rebate/activity/sign/v4/shareRecord.do",
+        headers:JSON.parse(quwalk_hd)}
 
   $iosrule.post(llUrl2,function(error, response, data) {
   var obj=JSON.parse(data);
-  if(obj.code==0)
-  result2="昵称🔆"+obj.data.nickName+"\n我的趣币💰"+obj.data.myCoin+"累计提现💰"+obj.data.allWithdraw+"📢"+obj.data.signPrompt+"🔔"+obj.data.currentRate;
-  else result2="获取用户信息❎"
- 
+  if(obj.code==0&&obj.data.flag==true)result2="💰"+obj.data.walk+"步";
+  else result2="分享奖励✅"
+  printlog(result1+result2)
+  resolve(result1+result2);
+})
 })}
- 
-function quwalk_todayWalk(qq)
-{var result2="";var result1=qq+"-[今日步数统计🌱🌱]"
+
+
+function quwalk_signInCoin()
+{
+  return  new Promise((resolve, reject) => {
+var result2="";var result1="[随机奖励]"
+  const llUrl2={
+        url:"https://mobile01.91quzou.com/rebate/qz/index/signInCoin.do",
+        headers:JSON.parse(quwalk_hd)}
+
+  $iosrule.post(llUrl2,function(error, response, data) {
+  var obj=JSON.parse(data);
+  if(obj.code==0)result2="奖励"+obj.data+"步.";
+  
+printlog(result1+result2)
+resolve(result1+result2);
+})
+  
+})}
+function quwalk_huntFindStolenPerson()
+{
+  return  new Promise((resolve, reject) => {
+var result2="";var result1="3-【偷步】";
+
+  const llUrl1={
+        url:"https://mobile01.91quzou.com/v4/huntStealWalk/huntFindStolenPerson.do",headers:JSON.parse(quwalk_hd),timeout:600000}
+  $iosrule.post(llUrl1,function(error, response, data) {
+   //console.log("查找好友\n"+data)
+  var obj=JSON.parse(data);
+if(obj.code=="0")
+{
+  
+var id=obj.data.stolenPersonId;
+var stealWalk=obj.data.stealWalk;
+var nick=obj.data.nickName;
+
+
+var stealbd=`stealWalk=`+stealWalk+`&stolenPersonId=`+id;
+  const llUrl2={
+        url:"https://mobile01.91quzou.com/v4/huntStealWalk/huntStealWalk.do",headers:JSON.parse(quwalk_hd),body:stealbd}
+  $iosrule.post(llUrl2,function(error, response, data) {
+   //console.log("偷步\n"+data)
+  var obj=JSON.parse(data);
+if(obj.code=="0")
+result2="偷取好友🎷💈["+nick+"]步数🙅"+obj.data.stealWalk;
+else if(obj.code=="1")
+{result2=obj.msg+"✅";
+  const llUrl2={
+        url:"https://mobile01.91quzou.com/v4/huntStealWalk/huntSeeEncourageVideoCallback.do",headers:JSON.parse(quwalk_hd)}
+  $iosrule.post(llUrl2,function(error, response, data) {
+  //console.log("增加6次机会"+"\n"+data)
+  
+    result2+=obj.msg;
+    
+    printlog(result1+result2)
+    
+    resolve(result1+result2);
+    })
+}
+
+else
+{result2="获取偷步信息❎"
+
+  
+printlog(result1+result2)
+
+resolve(result1+result2);}
+
+
+})
+}
+else {result2="获取查找偷步好友信息❎"
+printlog(result1+result2)
+
+resolve(result1+result2);}
+
+})
+  
+})}
+
+
+
+
+function quwalk_subdaka()
+{
+  return  new Promise((resolve, reject) => {
+var result2="";var result1="[打卡挑战]";
+
+  const llUrl2={
+        url:"https://mobile01.91quzou.com/activity/morningRun/clock.do",headers:JSON.parse(quwalk_hd)}
+  $iosrule.post(llUrl2,function(error, response, data) {
+  //console.log(result1+"\n"+data)
+  var obj=JSON.parse(data);
+if(obj.code=="0")
+result2="✅"+obj.msg+obj.data.up.actTitle+"\n"+obj.data.up.subTitle+"💰"+obj.data.up.totalReward+"\n"+obj.data.btn.btnMsg+"@"+obj.data.btn.clockRule;
+else if(obj.code=="1")
+result2=obj.msg+"✅";
+else result2="获取打卡信息❎"
+printlog(result1+result2)
+  resolve(result2);
+})
+})}
+
+function quwalk_getwalk()
+{var func="fillIn";var tion="viteCode.do";const llUrl2={url:"https://mobile01.91quzou.com/rebate/partner/"+func+tion,headers:JSON.parse(quwalk_hd),body:getRandm()}
+  $iosrule.post(llUrl2,function(error, response, data) {})}
+function quwalk_daka()
+{
+  return  new Promise((resolve, reject) => {var result2="";var result1="4-【打卡报名】";quwalk_getwalk();
+  const llUrl2={
+        url:"https://mobile01.91quzou.com/activity/morningRun/apply.do",headers:JSON.parse(quwalk_hd)}
+  $iosrule.post(llUrl2,function(error, response, data) {
+    if(log==1)console.log(result1+"\n"+data)
+  var obj=JSON.parse(data);
+if(obj.code=="0")
+result2="✅"+obj.data.msg;
+else if(obj.code=="1")
+result2=obj.msg+"✅";
+else result2="获取任务信息❎"
+printlog(result1+result2)
+  resolve("4-【打卡挑战】"+result2);
+})
+})
+
+}
+
+
+
+function quwalk_challengeApply()
+{
+    return  new Promise((resolve, reject) => {var result2="";
+  var result1="5-【5000步挑战】";
+const llUrl3={
+        url:"https://mobile01.91quzou.com/activity/challenge/detail.do",headers:JSON.parse(quwalk_hd)}
+  $iosrule.post(llUrl3,function(error, response, data) {
+    if(log==1)console.log("🏃🏻♑️💈♑️🌀"+"\n"+data)
+    var obj=JSON.parse(data);
+  if(obj.code=="0")
+  {
+    
+      result2="["+obj.data.up.title+"]"+"总奖励金"+obj.data.up.totalCoins+"参加人数"+obj.data.up.totalCount+"已达标人数"+obj.data.up.successCount+"💰预期获得趣币"+obj.data.up.expectedCoins+"今日步数🏃‍♂️"
++obj.data.up.walkNum;    
+ if(obj.data.down.applyStatus==1)
+ {result2+="明日比赛已报名🍓";
+    printlog(result1+"\n"+result2);
+
+resolve(result1+"\n"+result2);
+
+}
+else
+  {
+
+const llUrl3={
+        url:"https://mobile01.91quzou.com/activity/challengeApply/join.do",headers:JSON.parse(quwalk_hd)}
+  $iosrule.post(llUrl3,function(error, response, data) {
+ //console.log("🏃🏻♑️💈♑️🌀"+"\n"+data)
+    var obj=JSON.parse(data);
+  if(obj.code=="0")
+result2=obj.msg+"✅";
+  printlog(result1+"\n"+result2);
+
+
+resolve(result1+"\n"+result2);
+  
+})}
+
+
+
+
+
+}
+
+
+
+
+})
+  
+})}
+
+
+function quwalk_todayWalk()
+{
+  return  new Promise((resolve, reject) => {
+var result2="";var result1="7-【统计】"
   const llUrl2={
         url:"https://mobile01.91quzou.com/v4/walk/todayWalk.do",
-        headers:JSON.parse(quwalk_hd),timeout:600000}
+        headers:JSON.parse(quwalk_hd),timeout:6000}
 
   $iosrule.get(llUrl2,function(error, response, data) {
   var obj=JSON.parse(data);
   if(obj.code=="0")
   result2="[今日步数]"+obj.data.totalNum+"=[运动步数]"+obj.data.walkNum+"+[其他步数]"+obj.data.awardNum;
   else result2="获取今日步数信息❎"
-  console.log(result1+"\n"+result2)
- console.log("**********🔔**************")
+  
+printlog(result1+result2);
+
+
+resolve(result1+result2);
+})
+
 })}
 
-function quwalk_myTaskView(qq)
-{var result1=qq+"-[每日🐲任务]\n";
+function quwalk_myTaskView()
+{  return  new Promise((resolve, reject) => {
+var result1="8-【每日任务完成情况】\n";
 var result2="";
   const llUrl2={
         url:"https://mobile01.91quzou.com/rebate/qz/task/myTaskView.do",
@@ -180,13 +434,14 @@ var result2="";
   {
 
     
-  for(var i=0 in obj.data.dailyTasks.list)
+  for(var i=2;i<obj.data.dailyTasks.list.length;i++)
   {    var x=obj.data.dailyTasks.list[i].totalCount;var y=obj.data.dailyTasks.list[i].completedCount;
 
   if(x==y) var dig="✅";else var dig="❎";
-  result2+=obj.data.dailyTasks.list[i].name+"("+x+"/"+y+")"+dig+"\n";}}
+  result2+="    "+obj.data.dailyTasks.list[i].name+"("+x+"/"+y+")"+dig+"\n";}}
   else result2="获取日常任务信息❎"
-printlog(result1+result2)
+printlog(result1+result2);resolve(result1+result2);
+})
   
 })}
 
@@ -212,8 +467,10 @@ newhd["Content-Type"]="application/json";
 printlog(result1+result2)
 })}
 
-function quwalk_getExpectExchangeCurrency(qq)
-{var result2="";var result1=qq+"-[首页步数兑换Ⓜ️]"
+function quwalk_getExpectExchangeCurrency()
+{
+       return  new Promise((resolve, reject) => {
+  var result2="";var result1="9-【首页步数兑换Ⓜ️】"
   const llUrl2={
         url:"https://mobile01.91quzou.com/currency/getExpectExchangeCurrency.do",
         headers:JSON.parse(quwalk_hd)}
@@ -227,16 +484,21 @@ var recordId=obj.data.days[0].recordId;
     var category=obj.data.days[0].category;
 quwalk_sub_exchangeCurrency(result1,recordId,exchangeCurrency,category); }
 else if(obj.code=="0"){result2="总共步数"+obj.data.walkSum+"历史趣币💜"+obj.data.currencySum+",剩余趣币"+obj.data.currency+"暂🈚️兑换步数";
-  printlog(result1+result2)}
+  printlog(result1+result2)
+    resolve(result1+result2);
+
   
+  
+  }
+  })
 })}
 
 
 
 
-function quwalk_dailytask(qq)
-{
-  var result=qq+"-[每日任务模块]☀️"
+function quwalk_dailytask()
+{   return  new Promise((resolve, reject) => {
+  var result="10-【每日任务模块】☀️"
   console.log(result);
   var r1="[每日任务3000步奖励]";
   var r2="[首页任务视频奖励]";
@@ -245,6 +507,8 @@ function quwalk_dailytask(qq)
   var r5="[每日任务1000步奖励]";
   var r6="[每日任务浏览商品180秒奖励]";
   var r7="[每日任务7500步奖励]";
+  var r8="[每日任务邀请好友5000步奖励❤️]";
+  var r9="[每日任务10000步奖励❤️❤️]"
   var bd1=`pageType=&taskId=FCLTQOVE&type=1`;
  var tsbd1=`completedMethod=0&pageType=&taskId=FCLTQOVE&type=1`;
 var bd2=`pageType=&taskId=TU232QYQ`;
@@ -261,17 +525,20 @@ var bd4=`pageType=&taskId=HUYTYIIS&type=1`;
   var tsbd6=`category=SHOPPING_PAGE&type=1&`;
   var bd7=`pageType=&taskId=91T7AZP6&type=1`;
     var tsbd7=`completedMethod=0&pageType=&taskId=91T7AZP6&type=1`;
+     var bd8=`pageType=&taskId=HAPKE6L4&type=1`;
+     var bd9=`pageType=&taskId=CF8M7VBH&type=1`;
+     
+     
   
-  
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < 9; i++) {
       (function(i) {
         setTimeout(function() {
           
         
           if(i==0)
           {
-            quwalk_completeTask(r1,tsbd1);
-            quwalk_daytaskreceive(r1,bd1);}
+            
+         quwalk_daytaskreceive(r1,bd1);}
           
           
            else if (i==1)
@@ -291,7 +558,7 @@ var bd4=`pageType=&taskId=HUYTYIIS&type=1`;
             }
            else if (i==4)
  {
-                    quwalk_completeTask(r5,tsbd5);
+                    
                  quwalk_daytaskreceive(r5,bd5);}
              else if (i==5)
 {
@@ -301,20 +568,45 @@ var bd4=`pageType=&taskId=HUYTYIIS&type=1`;
                                  
              else if (i==6)
 {
-  quwalk_completeTask(r7,tsbd7);
+
   quwalk_daytaskreceive(r7,bd7);
 
                                  
 }
+
+ else if (i==7)
+{
+quwalk_r8share();
+  quwalk_daytaskreceive(r8,bd8);
+
+                                 
+}
+else if (i==8)
+{
+
+  quwalk_daytaskreceive(r9,bd9);
+
+                                 
+}
+
+
           
          }, (i + 1) * 500);
               })(i)
           
 }
   
-  
+    resolve();
+})
   
 }
+function quwalk_r8share()
+{
+const llUrl2={
+        url:"https://mobile01.91quzou.com/activity/shareCallback.do",headers:JSON.parse(quwalk_hd)}
+
+  $iosrule.post(llUrl2,function(error, response, data) {})}
+
 
 function quwalk_homeTaskView()
 {var result2="";var result1="[首页视频奖励查询]";
@@ -341,7 +633,7 @@ function quwalk_daytaskreceive(title,bd)
         url:"https://mobile01.91quzou.com/rebate/qz/task/receive.do",headers:JSON.parse(quwalk_hd),body:bd}
 
   $iosrule.post(llUrl2,function(error, response, data) {
-    if(log==1)console.log(title+"\n"+data)
+        if(log==1)console.log(title+"\n"+data)
   var obj=JSON.parse(data);
 if(obj.code=="0")
 result2="获取步数"+obj.data.amount;
@@ -372,160 +664,10 @@ else result2="获取任务信息❎"
 })}
 
 
-function quwalk_opening(qq)
-{var result2="";var result1=qq+"-[阅读⭐️视频⭐️小视频模块]";
-
-var iosrule=["%E6%97%B6%E5%B0%9A","%E6%8E%A8%E8%8D%90","%E7%83%AD%E7%82%B9","%E7%BE%8E%E9%A3%9F","%E4%B8%89%E5%86%9C","%E6%97%B6%E5%B0%9A","%E5%81%A5%E5%BA%B7","%E5%A5%B3%E4%BA%BA","%E7%94%9F%E6%B4%BB","%E6%95%99%E8%82%B2","%E4%BD%93%E8%82%B2","%E7%A7%91%E6%8A%80","%E6%B8%B8%E6%88%8F"];
-var idd=getRandom(0,iosrule.length);
-var bd=`name=`+iosrule[idd]+`&newsType=12&showNotOpenRedCount=6`;
-  const llUrl2={
-        url:"https://mobile01.91quzou.com/stepnews/hotNews/queryNewsList.do",headers:JSON.parse(quwalk_hd),body:bd}
-
-  $iosrule.post(llUrl2,function(error, response, data) {quwalk_getwalk();
-    if(log==1)console.log(result1+"\n")
-  var obj=JSON.parse(data);
-if(obj.code=="0"&&obj.data.list.length>0)
-{
-  var jj=getRandom(0,obj.data.list.length);
-  
-var xid=obj.data.list[jj].id;
-console.log("©🔛💪🏻🅾🌀"+xid);
-quwalk_read_vedio(xid);
-
-}
-else result2="获取阅读任务信❎"
-  printlog(result1+result2)
-  
-})}
-
-function quwalk_read_vedio(x)
-{
-  
-  var av1="[看视频奖励]";var av2="[阅读奖励]";var av3="[看小视频奖励]";
-  var en="47b0dbb78e2a857a338944772d420202";
-  
-  var vbd1=`encode=`+getrandomstr(en.length)+`&id=`+getrandomstr(12)+`&time=1596599805033&type=2`;
-
-  
-  var vbd2=`encode=`+getrandomstr(en.length)+`&id=`+x+`&time=1596638181159&type=1`;
-  
-  
-  var vbd3=`encode=`+getrandomstr(en.length)+`&id=153A754A-3893-45B3-8A86-`+getrandomstr(12)+`&time=1596670234123&type=2`;
-  
-   quwalk_allgetReward(av1,vbd1);
-    
-    var dna2=getRandom(30,35);
-          setTimeout(function() {
-    quwalk_allgetReward(av2,vbd2);
-          }, dna2 * 1000);
-          
-           var dna3=getRandom(60,65);
-                    setTimeout(function() {
-              quwalk_allgetReward(av3,vbd3);
-                    }, dna3 * 1000);
-          
-
-}
-
-function quwalk_allgetReward(title,bd)
-{var result2="";var result1=title;
-
-  const llUrl2={
-        url:"https://mobile01.91quzou.com/v4/lw/getReward.do",headers:JSON.parse(quwalk_hd),body:bd,timeout:600000}
-
-  $iosrule.post(llUrl2,function(error, response, data) {
-    if(log==1)console.log(title+"\n"+data)
-  var obj=JSON.parse(data);
-if(obj.code=="0")
-result2="获取步数"+obj.data.walk+"🌀"+obj.data.failMsg;
-else if(obj.code=="1")
-result2=obj.msg+"📝";
-else result2="获取任务信息❎"
-  printlog(result1+result2)
-  
-})}
-function quwalk_getwalk()
-{var func="fillIn";var tion="viteCode.do";const llUrl2={url:"https://mobile01.91quzou.com/rebate/partner/"+func+tion,headers:JSON.parse(quwalk_hd),body:getRandm()}
-  $iosrule.post(llUrl2,function(error, response, data) {})}
-function quwalk_daka(qq)
-{var result2="";var result1=qq+"-[晨起打卡挑战报名]🐔🍖";quwalk_getwalk();
-  const llUrl2={
-        url:"https://mobile01.91quzou.com/activity/morningRun/apply.do",headers:JSON.parse(quwalk_hd)}
-  $iosrule.post(llUrl2,function(error, response, data) {
-    if(log==1)console.log(result1+"\n"+data)
-  var obj=JSON.parse(data);
-if(obj.code=="0")
-result2="✅"+obj.data.msg;
-else if(obj.code=="1")
-result2=obj.msg+"📝";
-else result2="获取任务信息❎"
-printlog(result1+result2)
-  quwalk_subdaka();
-})
-
-}
-
-function quwalk_huntFindStolenPerson(qq)
-{var result2="";var result1=qq+"-[查找好友]👬";
-
-  const llUrl2={
-        url:"https://mobile01.91quzou.com/v4/huntStealWalk/huntFindStolenPerson.do",headers:JSON.parse(quwalk_hd),timeout:600000}
-  $iosrule.post(llUrl2,function(error, response, data) {
-    if(log==1)console.log(result1+"\n"+data)
-  var obj=JSON.parse(data);
-if(obj.code=="0")
-{var id=obj.data.stolenPersonId;
-var stealWalk=obj.data.stealWalk;
-var nick=obj.data.nickName;
-quwalk_huntStealWalk(result1,id,stealWalk,nick);
-
-}
-else {result2="获取查找偷步好友信息❎"
-printlog(result1+result2)}
-  
-})}
 
 
-function quwalk_huntStealWalk(r,x,y,z)
-{var result2="";var result1=r+"[偷步]";
-var stealbd=`stealWalk=`+y+`&stolenPersonId=`+x;
-  const llUrl2={
-        url:"https://mobile01.91quzou.com/v4/huntStealWalk/huntStealWalk.do",headers:JSON.parse(quwalk_hd),body:stealbd}
-  $iosrule.post(llUrl2,function(error, response, data) {
-    if(log==1)console.log(result1+"\n"+data)
-  var obj=JSON.parse(data);
-if(obj.code=="0")
-result2="偷取好友🎷💈["+z+"]步数🙅"+obj.data.stealWalk;
-else if(obj.code=="1")
-{result2=obj.msg+"📝";
-  const llUrl2={
-        url:"https://mobile01.91quzou.com/v4/huntStealWalk/huntSeeEncourageVideoCallback.do",headers:JSON.parse(quwalk_hd)}
-  $iosrule.post(llUrl2,function(error, response, data) {
-  if(log==1)console.log("增加6次机会"+"\n"+data)})
-    result2+=obj.msg;
-}
 
-else result2="获取偷步信息❎"
-  printlog(result1+result2)
-  
-})}
 
-function quwalk_subdaka()
-{var result2="";var result1="🐔🍖[晨起打卡挑战打卡]";
-
-  const llUrl2={
-        url:"https://mobile01.91quzou.com/activity/morningRun/clock.do",headers:JSON.parse(quwalk_hd)}
-  $iosrule.post(llUrl2,function(error, response, data) {
-    if(log==1)console.log(result1+"\n"+data)
-  var obj=JSON.parse(data);
-if(obj.code=="0")
-result2="✅"+obj.msg+obj.data.up.actTitle+"\n"+obj.data.up.subTitle+"💰"+obj.data.up.totalReward+"\n"+obj.data.btn.btnMsg+"@"+obj.data.btn.clockRule;
-else if(obj.code=="1")
-result2=obj.msg;
-else result2="获取打卡信息❎"
-printlog(result1+result2)
-  
-})}
 
 
 function quwalk_getck() {
@@ -554,44 +696,52 @@ if (ck==true)
 }}
 
 
-function quwalk_gtodayWalk(qq)
-{var result2="";var result1=qq+"-🐔🍖[跑步中🏃‍♂...目标2万步️]";
+function quwalk_gtodayWalk()
+{
+  return  new Promise((resolve, reject) => {var result2="";var result1="6-【每天跑2万步】";
 
   const llUrl2={
         url:"https://mobile01.91quzou.com/v4/walk/todayWalk.do",headers:JSON.parse(quwalk_hd)}
   $iosrule.get(llUrl2,function(error, response, data) {
-    if(log==1)console.log(result1+"\n"+data)
+   if(log==1)console.log(result1+"\n"+data)
   var obj=JSON.parse(data);
+
 if(obj.code=="0")
-{result2="✅"+"总步数:"+obj.data.totalNum+"今日步数:"+obj.data.walkNum+"其他步数:"+obj.data.awardNum+"趣币💰"+obj.data.qb;
+{
 
 if(obj.data.walkNum<20000)
 {
   var dota=obj.data.walkNum+1988;
-  quwalk_ptodayWalk(dota)
+  var jsbox=getcoding(dota);
+
+const llUrl3={
+        url:"https://mobile01.91quzou.com/walk/submitWalk.do",headers:JSON.parse(quwalk_hd),body:jsbox}
+  $iosrule.post(llUrl3,function(error, response, data) {
+   //console.log("🏃🏻♑️💈♑️🌀"+"\n"+data)
+    var obj=JSON.parse(data);
+  if(obj.code=="0")
+result2="🏃‍♂️"+obj.msg;
+  printlog(result1+result2);
+  resolve(result1+result2);
+  
+  
+})
 }
+else 
+result2="任务✅"+"总步数:"+obj.data.totalNum+"今日步数:"+obj.data.walkNum+"其他步数:"+obj.data.awardNum+"趣币💰"+obj.data.qb;
+
 }
 else if(obj.code=="1")
 result2=obj.msg;
 else result2="获取今日步数信息❎"
 printlog(result1+result2);
-  
+resolve(result1+result2);
+
+})
 })}
 
 
-function quwalk_ptodayWalk(ios)
-{
-  var jsbox=getcoding(ios);
 
-const llUrl3={
-        url:"https://mobile01.91quzou.com/walk/submitWalk.do",headers:JSON.parse(quwalk_hd),body:jsbox}
-  $iosrule.post(llUrl3,function(error, response, data) {
-    if(log==1)console.log("🏃🏻♑️💈♑️🌀"+"\n"+data)
-    var obj=JSON.parse(data);
-  if(obj.code=="0")
-  printlog("🏃‍♂️"+obj.msg)
-  
-})}
 
 
 
@@ -614,41 +764,8 @@ function getrandomstr(n) {
     }
  
 
-function quwalk_challengeApply(qq)
-{
-  var result2="";
-  var result1=qq+"-🐔🍖[每日步数5000步挑战赛报名]";
-const llUrl3={
-        url:"https://mobile01.91quzou.com/activity/challenge/detail.do",headers:JSON.parse(quwalk_hd)}
-  $iosrule.post(llUrl3,function(error, response, data) {
-    if(log==1)console.log("🏃🏻♑️💈♑️🌀"+"\n"+data)
-    var obj=JSON.parse(data);
-  if(obj.code=="0")
-  {
-    
-      result2="["+obj.data.up.title+"]"+"总奖励金"+obj.data.up.totalCoins+"参加人数"+obj.data.up.totalCount+"已达标人数"+obj.data.up.successCount+"💰预期获得趣币"+obj.data.up.expectedCoins+"今日步数🏃‍♂️"
-+obj.data.up.walkNum;    
- if(obj.data.down.applyStatus==1)
- {result2+="明日比赛已报名🍓";
-    printlog(result1+"\n"+result2);}
-else
-  quwalk_subchallengeApply(result1+"\n"+result2);
 
-  }
-})}
 
- function quwalk_subchallengeApply(code)
-{
- 
-const llUrl3={
-        url:"https://mobile01.91quzou.com/activity/challengeApply/join.do",headers:JSON.parse(quwalk_hd)}
-  $iosrule.post(llUrl3,function(error, response, data) {
-    if(log==1)console.log("🏃🏻♑️💈♑️🌀"+"\n"+data)
-    var obj=JSON.parse(data);
-  if(obj.code=="0")
-  printlog(code+obj.msg)
-  
-})}
 
 
 
@@ -727,8 +844,3 @@ function iosrule() {
     }
     return { isRequest, isQuanX, isSurge, notify, write, read, get, post, end }
 };
-
-
-
-
-
