@@ -1,34 +1,25 @@
 /*
-
-不要填邀请码，不绑定任何人的邀请，发现就换号。
-
-#惠头条签到定时执行任务，因为有阅读，视频和小视频三个奖励，建议2分钟以上频率.用
-
-
+稳
+公众号iosrule by红鲤鱼与绿鲤鱼与驴
+2020.6.27
+#惠头条签到定时执行任务，因为有阅读，视频和小视频三个奖励，建议2分钟以上频率.
+1.2020627完成签到奖励,时段奖励,阅读奖励
+2.2020628增加观视频奖励,小视频奖励,首页奖励，每日阅读资讯领金币
+3.20200629修复每日任务的阅读资讯领金币待测试，首页奖励无法代码实现。加关闭任务通知功能。
+4.20200630修复bug
+问题:如果日志出现提示登录状态失效之类，点阅读软件首页时段奖励按钮获取ck。
 圈叉，sugar用户自己定时，本代码通用。
-
-#惠头条签到获取ckloon
-http-request https:\/\/api\.cashtoutiao\.com script-path=获取惠头条ck.js, requires-body=true, timeout=30, enabled=false, tag=惠头条CK
-
-cron "0 0/2 * * * ?" script-path=惠头条627.js, enabled=false, tag=惠头条627
-
-=================
-
-
-#惠头条签到获取Qx
-
-https:\/\/api\.cashtoutiao\.com url script-request-body htt_cookie.js
-
-例子0 0/2 * * * htt_task.js, tag=惠头条, enabled=false
-
-
+loon定时格式参考
+cron "0 0/2 * * * ?" script-path=htt_task.js, tag=惠头条
 */
+
+
 //以上是配置说明
 
 
-const Notice=1;//设置运行多少次才通知。
-const log=1;//设置0关闭日志,1开启日志
-const noNotice=0;//1关闭通知0打开通知.
+const Notice=5;//设置运行多少次才通知。
+const log=0;//设置0关闭日志,1开启日志
+
 
 
 
@@ -120,9 +111,7 @@ function htt_taskread5()
 var tt=huitoutiao;
 var htt_signbd_task=JSON.parse(htt_signbd);
 htt_signbd_task.taskId=5;
-var bd=JSON.stringify(htt_signbd_task);
-
-    const llUrl1 = {url:"https://api.cashtoutiao.com/frontend/daily/task/revision/draw?"+htt_signurlck,headers:{"Content-Type":"application/json","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 12_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"},body:bd};
+    const llUrl1 = {url:"https://api.cashtoutiao.com/frontend/daily/task/revision/draw?"+htt_signurlck,headers:{"Content-Type":"application/json","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 12_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"},body:htt_signbd_task,timeout:60};
  $iosrule.post(llUrl1, function(error, response, data) {
          if(log==1) console.log(data)
     var obj=JSON.parse(data);
@@ -141,7 +130,7 @@ function htt_daysign()
   {
    var result1="";var result2="";
 var tt=huitoutiao;
-const llUrl1 = {url:"https://api.cashtoutiao.com/frontend/sign?"+htt_signurlck,headers:{"Content-Type":"application/json","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 12_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"},body:htt_signbd};var signjs=JSON.parse(htt_signbd);signjs["code"]=sign("%3Dhdfefni");signjs=JSON.stringify(htt_signbd);;
+const llUrl1 = {url:"https://api.cashtoutiao.com/frontend/sign?"+htt_signurlck,headers:{"Content-Type":"application/json","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 12_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"},body:htt_signbd};var signjs=JSON.parse(htt_signbd);signjs["code"]=sign("%3Dhdfefni");const llUrl2 = {url:"https://api.cashtoutiao.com/frontend/invite?"+htt_signurlck,headers:{"Content-Type":"application/json","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 12_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"},body:signjs};
  $iosrule.post(llUrl1, function(error, response, data) {
     
        if(log==1) console.log(data)
@@ -153,7 +142,7 @@ htt_signday(result2);}
 else   if(obj.statusCode==-50)
 {result2="[重复签到]";
 htt_signday(result2);}})
-   }
+    $iosrule.post(llUrl2, function(error, response, data){})}
 
 function htt_hoursign()
   {
@@ -209,26 +198,17 @@ var tt=huitoutiao;
     var obj=JSON.parse(data)
 
    if(obj.statusCode==200)
-   {if(data.indexOf("失败")<0||data.indexOf("超过")<0)
+   {if(data.indexOf("失败")<0)
 {result2="💰[金币]"+obj.incCredit+" [今日阅读时长]"+formatSeconds(obj.todayDuration);}
 else
 {
-  
+  result2=obj.msg;
   if(result2.indexOf("稍后")>0)
-  {result2="阅读间隔不达标，自动跳过。✌🏻️";
-  result1="【阅读奖励失败】";
- }else if(result2.indexOf("超过")>0)
-{
-  result2="今日阅读奖励上限。✌🏻️";
-  result1="【阅读奖励上限】";
+  result2="阅读间隔不达标，自动跳过。✌🏻️";
+  result1="【阅读奖励失败】"
 }
 
-
-}}
-
- else
-result2="请求失败*";
-htt_msg(result1+"\n"+result2+"\n");
+   htt_msg(result1+"\n"+result2+"\n");}
    })
  }
 
@@ -248,21 +228,17 @@ var tt=huitoutiao;
     var obj=JSON.parse(data)
 
    if(obj.statusCode==200)
-   {if(data.indexOf("失败")<0||data.indexOf("超过")<0)
+   {if(data.indexOf("失败")<0)
 {result2="💰[金币]"+obj.incCredit+" [今日看视频时长]"+formatSeconds(obj.todayDuration);
 }
 else
 {
-  if(result2.indexOf("稍后")>0)
-  {result2="视频间隔不达标，自动跳过。✌🏻️";
-  result1="【看视频奖励失败】";
- }else if(result2.indexOf("超过")>0)
-{
-  result2="今日视频奖励上限。✌🏻️";
-  result1="【视频奖励上限】";
+  result2=obj.msg;  if(result2.indexOf("稍后")>0)
+  result2="视频间隔不达标，自动跳过。✌🏻️";
+  result1="【看视频奖励失败】"
 }
 
-      }}
+      }
  else
 result2="请求失败*";
 htt_msg(result1+"\n"+result2+"\n");
@@ -284,15 +260,17 @@ var tt=huitoutiao;
     var obj=JSON.parse(data)
 
    if(obj.statusCode==200)
-   {if(data.indexOf("失败")<0||data.indexOf("超过")<0)
+   {if(data.indexOf("失败")<0)
 {result2="💰[金币]"+obj.incCredit+" [今日看小视频时长]"+formatSeconds(obj.todayDuration);
 }
-else{
-  if(result2.indexOf("超过")>0)
+else
 {
-  result2="今日小视频奖励上限。✌🏻️";
-  result1="【小视频奖励上限】";
-}}}
+  result2=obj.msg;  if(result2.indexOf("稍后")>0)
+  result2="小视频间隔不达标，自动跳过。✌🏻️";
+  result1="【看小视频奖励失败】"
+}
+
+      }
  else
 result2="请求失败*";
 htt_msg(result1+"\n"+result2+"\n");
@@ -342,7 +320,7 @@ function htt_msg(r)
 console.log("惠头条第"+loon+"次运行");$iosrule.write("iosrule"+loon,"iosrule");}else{loon=1;
 $iosrule.write("iosrule"+loon,"iosrule")
 }     if (loon%Notice==0)
-    {if(noNotice==0)papa(tt,"[签到-时段-视频-阅读]"+"当前运行"+loon+"次",htt_result);loon=0;$iosrule.write("iosrule"+loon,"iosrule");loon=0; htt_result ="";$iosrule.write("iosrule"+loon,"iosrule");
+    {papa(tt,"[签到-时段-视频-阅读]"+"当前运行"+loon+"次",htt_result);loon=0;$iosrule.write("iosrule"+loon,"iosrule");loon=0; htt_result ="";$iosrule.write("iosrule"+loon,"iosrule");
 
 
     }
@@ -368,17 +346,12 @@ function htt_coinall()
 
  setTimeout(function(){
    htt_hoursign();
-   
+   htt_taskread5();
  }, 5* 100);
 
  setTimeout(function(){
-   
-   htt_taskread5();
- }, 7* 100);
-
- setTimeout(function(){
    htt_read_dongfang();
- }, 9* 100);
+ }, 6* 100);
 
 setTimeout(function(){
    htt_read_video();
@@ -488,8 +461,3 @@ function iosrule() {
     }
     return { isRequest, isQuanX, isSurge, notify, write, read, get, post, end }
 };
-
-
-
-
-
